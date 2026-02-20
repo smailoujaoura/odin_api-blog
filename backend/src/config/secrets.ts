@@ -6,9 +6,11 @@ function requireEnv(key: string): string {
 	return value;
 }
 
-export default {
+const ENV = {
 	PORT: process.env.PORT || 3000,
 	DATABASE_URL: requireEnv("DATABASE_URL"),
 	JWT_SECRET: requireEnv("JWT_SECRET"),
 	NODE_ENV: requireEnv("NODE_ENV")
-} as const;
+};
+
+export default ENV;
