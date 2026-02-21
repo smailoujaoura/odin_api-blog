@@ -3,11 +3,13 @@ import ENV from "./config/secrets.js";
 import logger from "./config/logger.js";
 import router from "./routes/router.js";
 import { errorsHandler } from "./middlewares/errors.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 app.use('/api', router);
 app.use(errorsHandler);
