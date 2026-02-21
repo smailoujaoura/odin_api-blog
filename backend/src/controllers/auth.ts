@@ -5,11 +5,13 @@ import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import ENV from "../config/secrets.js";
 import z from "zod";
+import { Role, User } from "../generated/prisma/client.js";
 
-export const generateToken = (userId: number): string => {
+export const generateToken = (user: User): string => {
 	return jwt.sign(
 		{
-			sub: userId.toString(),
+			sub: user.id.toString(),
+			role: user.role
 		},
 		ENV.JWT_SECRET,
 		{
@@ -26,23 +28,8 @@ export const verifyToken = (token: string): JwtPayload => {
 	}
 }
 
-export const secure = (req: Request, res: Response) => {
-	res.send("ACCESSED SECURE!!!");
-}
-
-export const authGuard = async (req: Request, res: Response, next: NextFunction) => {
-	const token = req.cookies.token;
-	if (!token) {
-		throw new CustomError(Errors.UNAUTHORIZED, "No session found.");
-	}
-	
-	const payload = verifyToken(token) as { sub: string };
-	req.userId = +payload.sub;
-	next();
-}
-
-const sendToken = (res: Response, userId: number, statusCode: number) => {
-	const token = generateToken(userId);
+const sendToken = (res: Response, user: User, statusCode: number) => {
+	const token = generateToken(user);
 
 	res.status(statusCode).cookie("token", token, {
 		httpOnly: true,
@@ -64,11 +51,11 @@ export const login = async (req: Request, res: Response) => {
 		throw new CustomError(Errors.INVALID_CREDENTIALS)
 	}
 
-	sendToken(res, user.id, 200);
+	sendToken(res, user, 200);
 }
 
 export const signup = async (req: Request, res: Response) => {
-	const {name, email, password} = req.body;
+	const {name, email, password, admin} = req.body;
 
 	const existingUser = await prisma.user.findUnique({where: {email}});
 	if (existingUser) {
@@ -80,10 +67,11 @@ export const signup = async (req: Request, res: Response) => {
 			name,
 			email,
 			password: await bcrypt.hash(password, 10),
+			role: admin === ENV.ADMIN_KEY ? Role.ADMIN : Role.USER,
 		}
 	});
 
-	sendToken(res, user.id, 201);
+	sendToken(res, user, 201);
 }
 
 export const logout = (req: Request, res: Response) => {
@@ -100,6 +88,10 @@ export const logout = (req: Request, res: Response) => {
 	})
 }
 
+export const secure = (req: Request, res: Response) => {
+	res.send("ACCESSED SECURE!!!");
+}
+
 // parser middleware which accepts a zod generic schema and parses body according to that schema replacing the body in the req object or raising an error.
 export const validateBody = (schema: z.ZodSchema) => {
 	return (req: Request, res: Response, next: NextFunction) => {
@@ -114,4 +106,23 @@ export const validateBody = (schema: z.ZodSchema) => {
 		req.body = parsed.data;
 		next();
 	}
+}
+
+export const authGuard = async (req: Request, res: Response, next: NextFunction) => {
+	const token = req.cookies.token;
+	if (!token) {
+		throw new CustomError(Errors.UNAUTHORIZED, "No session found.");
+	}
+	
+	const payload = verifyToken(token) as { sub: string };
+	req.userId = +payload.sub;
+	next();
+}
+
+export const adminGuard = async (req: Request, res: Response, next: NextFunction) => {
+	if (req.userRole !== Role.ADMIN) {
+		throw new CustomError(Errors.FORBIDDEN, "Access denied.");
+	}
+
+	next();
 }

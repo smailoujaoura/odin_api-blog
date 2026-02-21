@@ -10,7 +10,8 @@ const ENV = {
 	PORT: process.env.PORT || 3000,
 	DATABASE_URL: requireEnv("DATABASE_URL"),
 	JWT_SECRET: requireEnv("JWT_SECRET"),
-	NODE_ENV: requireEnv("NODE_ENV")
+	NODE_ENV: requireEnv("NODE_ENV"),
+	ADMIN_KEY: requireEnv("ADMIN_KEY"),
 };
 
 export default ENV;
