@@ -8,6 +8,8 @@ import { useEffect, useState } from "react"
 import api from "./config/axios"
 import Home from "./components/Home"
 import New from "./components/New"
+import Edit from "./components/Edit"
+import Post from "./components/Post"
 
 
 function App() {
@@ -46,6 +48,8 @@ function App() {
 				<Route path="/login" element={<Login/>}/>
 				<Route path="/signup" element={<Signup/>}/>
 				<Route path="/new" element={<New/>}/>
+				<Route path="/edit/:id" element={<Edit/>}/>
+				<Route path="/posts/:id" element={<Post/>}/>
 				<Route path="*" element={<div>404 - Not Found</div>}/>
 			</Routes>
 		</BrowserRouter>
