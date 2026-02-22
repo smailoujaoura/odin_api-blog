@@ -14,8 +14,12 @@ app.use(cookieParser());
 
 // const origins = [ENV.ORIGIN_ONE, ENV.ORIGIN_TWO];
 app.use(cors({
-	origin: "*",
-	credentials: true,
+    origin: (origin, callback) => {
+        // If there is no origin (like a server-to-server request) 
+        // or any origin at all, allow it and mirror it back.
+        callback(null, true);
+    },
+    credentials: true,
 }));
 
 app.use('/api', router);
