@@ -64,6 +64,7 @@ export default function Post() {
 
 		try {
 			await api.delete(`/posts/${id}/comments/${commentId}`);
+			
 			setComments(comments.filter(c => c.id !== commentId));
 			toast.success("Comment deleted");
 		} catch {
@@ -112,9 +113,10 @@ export default function Post() {
 					</form>
 
 					<div className="space-y-4">
-						{comments.map((comment) => (
+						{[...comments].reverse().map((comment) => (
 							<div key={comment.id} className="group bg-zinc-900/50 border border-zinc-800 p-5 rounded-2xl transition-all hover:border-zinc-700">
 								<div className="flex justify-between items-start mb-2">
+									{/* Left: Metadata */}
 									<div className="flex flex-col">
 										<span className="font-bold text-zinc-200 text-sm">
 											{comment.user.name}

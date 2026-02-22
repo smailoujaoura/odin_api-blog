@@ -1,5 +1,3 @@
-
-
 import type { NextFunction, Request, Response } from "express";
 import { CustomError, Errors } from "../middlewares/errors.js";
 import prisma from "../config/prisma.js";
@@ -164,11 +162,3 @@ export const getMe = async (req: Request, res: Response) => {
 		user: req.user
 	});
 };
-
-export const secure = (req: Request, res: Response) => {
-	res.send("ACCESSED SECURE!!!");
-}
-
-export const admin = (req: Request, res: Response) => {
-	res.send("ACCESSED ADMIN SECURE");
-}

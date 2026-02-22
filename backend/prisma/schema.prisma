@@ -48,7 +48,7 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   approved  Boolean  @default(true)
-  post      Post     @relation(fields: [postId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
