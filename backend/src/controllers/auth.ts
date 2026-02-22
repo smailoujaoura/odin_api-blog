@@ -37,7 +37,7 @@ const sendToken = (res: Response, user: User, statusCode: number) => {
 	res.status(statusCode).cookie("token", token, {
 		httpOnly: true,
 		secure: ENV.NODE_ENV === "production",
-		sameSite: "strict",
+		sameSite: "none",
 		maxAge: 1000 * 60 * 60,
 		path: "/",
 	}).json({

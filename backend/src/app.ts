@@ -16,7 +16,7 @@ const origins = [ENV.ORIGIN_ONE, ENV.ORIGIN_TWO];
 app.use(cors({
 	origin: origins,
 	credentials: true,
-}))
+}));
 
 app.use('/api', router);
 app.use(errorsHandler);
