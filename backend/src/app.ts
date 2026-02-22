@@ -12,9 +12,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-const origins = [ENV.ORIGIN_ONE, ENV.ORIGIN_TWO];
+// const origins = [ENV.ORIGIN_ONE, ENV.ORIGIN_TWO];
 app.use(cors({
-	origin: origins,
+	origin: "*",
 	credentials: true,
 }));
 
