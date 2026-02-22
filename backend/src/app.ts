@@ -12,14 +12,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// const origins = [ENV.ORIGIN_ONE, ENV.ORIGIN_TWO];
+const allowedOrigins = [
+  'https://blog-api-amber-theta.vercel.app',
+  'https://blog-api-frontend-topaz.vercel.app',
+  'http://localhost:5173'
+];
+
 app.use(cors({
-    origin: (origin, callback) => {
-        // If there is no origin (like a server-to-server request) 
-        // or any origin at all, allow it and mirror it back.
-        callback(null, true);
-    },
-    credentials: true,
+	origin: (origin, callback) => {
+		if (!origin || allowedOrigins.includes(origin)) {
+			callback(null, true);
+		} else {
+			callback(new Error('Not allowed by CORS'));
+		}
+	},
+	credentials: true
 }));
 
 app.use('/api', router);
